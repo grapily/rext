@@ -199,19 +199,44 @@ describe('Rext', function () {
 
   describe('#list', function () {
 
-    it('lists all document names if no version is passed', function (done) {
+    var rext = new Rext(repository_path);
 
-      done();
+    it('lists all document names if undefined document name is passed', function (done) {
+      rext.list(undefined, function (err, data) {
+        data.should.should.have.lengthOf(2);
+        data.should.contain(service1);
+        data.should.contain(service2);
+
+        done();
+      });
     });
 
-    it('lists all version strings of a document, but \'last\', if version is passed', function (done) {
+    it('lists all document names if nothing but callback is passed', function (done) {
+      rext.list(function (err, data) {
+        data.should.should.have.lengthOf(2);
+        data.should.contain(service1);
+        data.should.contain(service2);
 
-      done();
+        done();
+      });
+    });
+
+    it('lists all version strings of a document, but \'last\', if document name is passed', function (done) {
+      rext.list(service1, function (err, data) {
+        data.should.should.have.lengthOf(2);
+        data.should.contain(s1version001);
+        data.should.contain(s1version002);
+
+        done();
+      });
     });
 
     it('returns an empty list if a not-existing document name is passed', function (done) {
+      rext.list('false_service', function (err, data) {
+        data.should.should.have.lengthOf(0);
 
-      done();
+        done();
+      });
     });
 
   });
