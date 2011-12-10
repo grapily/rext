@@ -194,8 +194,7 @@ describe('Rext', function () {
       var options = {
             version: s1version003
           , data: new Buffer(s1v003docStr)
-          }
-          ;
+          };
 
       throwTest(rext.create, options, noopErr);
 
@@ -206,8 +205,7 @@ describe('Rext', function () {
       var options = {
             name: service1
           , data: new Buffer(s1v003docStr)
-          }
-          ;
+          };
 
       throwTest(rext.create, options, noopErr);
 
@@ -218,8 +216,7 @@ describe('Rext', function () {
       var options = {
             name: service1
           , version: s1version003
-          }
-          ;
+          };
 
       throwTest(rext.create, options, noopErr);
 
@@ -390,8 +387,7 @@ describe('Rext', function () {
     it('throws an error if document name is not passed', function (done) {
       var options = {
             version: s1version002
-          }
-          ;
+          };
 
       throwTest(rext.retrieve, options, noopErr);
 
@@ -467,8 +463,7 @@ describe('Rext', function () {
       var options = {
             version: s1version002
           , data: new Buffer(s1v003docStr)
-          }
-          ;
+          };
 
       throwTest(rext.update, options, noopErr);
 
@@ -479,8 +474,7 @@ describe('Rext', function () {
       var options = {
             name: service1
           , version: s1version002
-          }
-          ;
+          };
 
       throwTest(rext.update, options, noopErr);
 
