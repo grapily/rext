@@ -250,6 +250,8 @@ describe('Rext', function () {
 
   describe('#destroy', function () {
 
+    var rext = new Rext(repository_path);
+
     it('destroys a specific document version', function (done) {
       rext.destroy({
         name: service1
@@ -280,7 +282,7 @@ describe('Rext', function () {
     it('returns an error if not-existing document name is passed', function (done) {
       rext.destroy({
         name: 'false_service'
-      , version: s1version003
+      , version: s1version002
       }, function (err) {
         err.should.be.an.instanceof(Error);
 
@@ -303,34 +305,69 @@ describe('Rext', function () {
 
   describe('#retrieve', function () {
 
-    it('retrieves specific version of a document', function (done) {
+    var rext = new Rext(repository_path);
 
-      done();
+    it('retrieves specific version of a document', function (done) {
+      rext.retrieve({
+        name: service1
+      , version: s1version001
+      }, function (err, data) {
+        if (err) done(err);
+
+        var doc = data.toString('base64');
+        doc.should.equal(s1v001desc_str.toString('base64'));
+
+        done();
+      });
     });
 
     it('retrieves latest version of a document if version is not passed', function (done) {
+      rext.retrieve({
+        name: service1
+      }, function (err, data) {
+        if (err) done(err);
 
-      done();
+        var doc = data.toString('base64');
+        doc.should.equal(s1v002desc_str.toString('base64'));
+
+        done();
+      });
     });
 
     it('returns an error if not-existing document name is passed', function (done) {
+      rext.retrieve({
+        name: 'false_service'
+      , version: s1version002
+      }, function (err) {
+        err.should.be.an.instanceof(Error);
 
-      done();
-    });
-
-    it('returns an error if not-existing document name is passed', function (done) {
-
-      done();
+        done();
+      });
     });
 
     it('returns an error if not-existing document version is passed', function (done) {
+      rext.retrieve({
+        name: service1
+      , version: '1.0.6'
+      }, function (err) {
+        err.should.be.an.instanceof(Error);
 
-      done();
+        done();
+      });
     });
 
     it('throws an error if document name is not passed', function (done) {
+      should.throws(
+        rext.retrieve({
+          version: s1version002
+        }
+        , function (err) {
+            if (err) done(err);
+          }
+        )
+      );
 
-     done();
+      done();
     });
 
   });
