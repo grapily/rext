@@ -119,7 +119,7 @@ describe('Resxt', function () {
 
   describe('#update', function () {
 
-    it('update...', function () {
+    it('update...', function (done) {
 
       done();
     });
