@@ -1,0 +1,14 @@
+{
+    "name": "rext"
+  , "version": "0.0.3"
+  , "description": ""
+  , "keywords": []
+  , "author": "Grapily <dev.grapily.com>"
+  , "dependencies": {}
+  , "devDependencies": {
+        "should": ">=0.3.2"
+      , "mocha": ">=0.3.0"
+  }
+  , "main": "./index.js"
+  , "engines": { "node": "*" }
+}

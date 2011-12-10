@@ -1,0 +1,22 @@
+
+SRC = lib/rext.js
+
+TESTS = test/*.js
+REPORTER = dot
+
+all:
+	echo "Nothing to do... I'm a Node.js module!"
+
+test:
+	@NODE_ENV=test ./node_modules/.bin/mocha \
+		--require should \
+		--reporter $(REPORTER) \
+		--growl \
+		$(TESTS)
+
+test-server:
+	@node test/server
+
+docs: lib
+
+.PHONY: test docs clean
