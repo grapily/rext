@@ -92,7 +92,27 @@ describe('Rext', function () {
 
     var rext = new Rext(repository_path);
 
-    it('create...', function (done) {
+    it('creates a new version of document in the repository', function (done) {
+
+     done();
+    });
+
+    it('creates the first document version in the repository', function (done) {
+
+     done();
+    });
+
+    it('throws an error if document name is not passed', function (done) {
+
+     done();
+    });
+
+    it('throws an error if document version is not passed', function (done) {
+
+     done();
+    });
+
+    it('throws an error if document data is not passed', function (done) {
 
      done();
     });
@@ -101,16 +121,33 @@ describe('Rext', function () {
 
   describe('#list', function () {
 
-    it('list...', function (done) {
+    it('lists all document names if no version is passed', function (done) {
 
       done();
     });
+
+    it('lists all version string of a document if version is passed', function (done) {
+
+      done();
+    });
+
+    it('returns an empty list if a not-existing document name is passed')
 
   });
 
   describe('#destroy', function () {
 
-    it('destroy...', function (done) {
+    it('destroys a specific document version', function (done) {
+
+      done();
+    });
+
+    it('destroys a document and all its versions', function (done) {
+
+      done();
+    });
+
+    it('returns an error if not-existing document name is passed', function (done) {
 
       done();
     });
@@ -119,15 +156,51 @@ describe('Rext', function () {
 
   describe('#retrieve', function () {
 
-    it('retrieve...', function (done) {
+    it('retrieves specific version of a document', function (done) {
 
       done();
     });
+
+    it('retrieves latest version of a document if version is not passed', function (done) {
+
+      done();
+    });
+
+    it('returns an error if not-existing document name is passed', function (done) {
+
+      done();
+    });
+
   });
 
   describe('#update', function () {
 
-    it('update...', function (done) {
+    it('updates a specific version of a document', function (done) {
+
+      done();
+    });
+
+    it('updates the last version of a document if version is not passed', function (done) {
+
+      done();
+    });
+
+    it('returns an error if not-existing document name is passed', function (done) {
+
+      done();
+    });
+
+    it('returns an error if not-existing document version is passed', function (done) {
+
+      done();
+    });
+
+    it('throws an error if document name is not passed', function (done) {
+
+      done();
+    });
+
+    it('throws an error if document data is not passed', function (done) {
 
       done();
     });
