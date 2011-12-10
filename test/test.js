@@ -203,6 +203,8 @@ describe('Rext', function () {
 
     it('lists all document names if undefined document name is passed', function (done) {
       rext.list(undefined, function (err, data) {
+        if (err) done(err);
+
         data.should.should.have.lengthOf(2);
         data.should.contain(service1);
         data.should.contain(service2);
@@ -213,6 +215,8 @@ describe('Rext', function () {
 
     it('lists all document names if nothing but callback is passed', function (done) {
       rext.list(function (err, data) {
+        if (err) done(err);
+
         data.should.should.have.lengthOf(2);
         data.should.contain(service1);
         data.should.contain(service2);
@@ -223,6 +227,8 @@ describe('Rext', function () {
 
     it('lists all version strings of a document, but \'last\', if document name is passed', function (done) {
       rext.list(service1, function (err, data) {
+        if (err) done(err);
+
         data.should.should.have.lengthOf(2);
         data.should.contain(s1version001);
         data.should.contain(s1version002);
@@ -233,7 +239,8 @@ describe('Rext', function () {
 
     it('returns an empty list if a not-existing document name is passed', function (done) {
       rext.list('false_service', function (err, data) {
-        data.should.should.have.lengthOf(0);
+        data.should.be.an.instanceof(Array);
+        data.should.have.lengthOf(0);
 
         done();
       });
@@ -244,23 +251,52 @@ describe('Rext', function () {
   describe('#destroy', function () {
 
     it('destroys a specific document version', function (done) {
+      rext.destroy({
+        name: service1
+      , version: s1version002
+      }, function (err) {
+        if (err) done(err);
 
-      done();
+        should.be.true(path.existsSync(s1v001desc_path));
+        should.not.be.true(path.existsSync(s1v002desc_path));
+
+        done();
+      })
     });
 
     it('destroys a document and all its versions', function (done) {
+      rext.destroy({
+        name: service1
+      }, function (err) {
+        if (err) done(err);
 
-      done();
+        should.be.true(path.existsSync(service2_path));
+        should.not.be.true(path.existsSync(service1_path));
+
+        done();
+      })
     });
 
     it('returns an error if not-existing document name is passed', function (done) {
+      rext.destroy({
+        name: 'false_service'
+      , version: s1version003
+      }, function (err) {
+        err.should.be.an.instanceof(Error);
 
-      done();
+        done();
+      });
     });
 
     it('returns an error if not-existing document version is passed', function (done) {
+      rext.destroy({
+        name: service1
+      , version: '1.0.3'
+      }, function (err) {
+        err.should.be.an.instanceof(Error);
 
-      done();
+        done();
+      });
     });
 
   });
