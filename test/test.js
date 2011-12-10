@@ -102,6 +102,16 @@ describe('Rext', function () {
      done();
     });
 
+    it('returns an error if document version already exists', function (done) {
+
+     done();
+    });
+
+    it('returns an error if document name is not valid', function (done) {
+
+     done();
+    });
+
     it('throws an error if document name is not passed', function (done) {
 
      done();
@@ -126,12 +136,15 @@ describe('Rext', function () {
       done();
     });
 
-    it('lists all version string of a document if version is passed', function (done) {
+    it('lists all version strings of a document, but \'last\', if version is passed', function (done) {
 
       done();
     });
 
-    it('returns an empty list if a not-existing document name is passed')
+    it('returns an empty list if a not-existing document name is passed', function (done) {
+
+      done();
+    });
 
   });
 
@@ -148,6 +161,11 @@ describe('Rext', function () {
     });
 
     it('returns an error if not-existing document name is passed', function (done) {
+
+      done();
+    });
+
+    it('returns an error if not-existing document version is passed', function (done) {
 
       done();
     });
@@ -169,6 +187,21 @@ describe('Rext', function () {
     it('returns an error if not-existing document name is passed', function (done) {
 
       done();
+    });
+
+    it('returns an error if not-existing document name is passed', function (done) {
+
+      done();
+    });
+
+    it('returns an error if not-existing document version is passed', function (done) {
+
+      done();
+    });
+
+    it('throws an error if document name is not passed', function (done) {
+
+     done();
     });
 
   });
