@@ -21,6 +21,7 @@ describe('Rext', function () {
       , 'protocol': 'http'
       , 'url': 'api.service1.com/1'
       }
+    , s1v001desc_str = JSON.stringify(s1v001desc)
     , s1v001desc_updated = {
         'service': service1
       , 'version': '0.0.1'
@@ -28,6 +29,7 @@ describe('Rext', function () {
       , 'protocol': 'http'
       , 'url': 'api.service1.com/1'
       }
+    , s1v002desc_str = JSON.stringify(s1v002desc)
     , s1version002 = '0.0.2'
     , s1v002desc = {
         'service': service1
@@ -36,6 +38,7 @@ describe('Rext', function () {
       , 'protocol': 'https'
       , 'url': 'api.service1.com/1'
       }
+    , s1v003desc_str = JSON.stringify(s1v003desc)
     , s1version003 = '0.0.3'
     , s1v003desc = {
         'service': service1
@@ -44,14 +47,15 @@ describe('Rext', function () {
       , 'protocol': 'https'
       , 'url': 'api.service1.com/1'
       }
-    , service1_path = path.join(repository_path, service1);
-    , s1version001_path = path.join(service1_path, s1version001);
-    , s1version002_path = path.join(service1_path, s1version002);
-    , s1version003_path = path.join(service1_path, s1version003);
-    , s1v001desc_path = path.join(s1version001_path, filename);
-    , s1v002desc_path = path.join(s1version002_path, filename);
-    , s1v003desc_path = path.join(s1version003_path, filename);
-    , s1latest_path = path.join(service1_path, latest_dir);
+    , s1v003desc_str = JSON.stringify(s1v003desc)
+    , service1_path = path.join(repository_path, service1)
+    , s1version001_path = path.join(service1_path, s1version001)
+    , s1version002_path = path.join(service1_path, s1version002)
+    , s1version003_path = path.join(service1_path, s1version003)
+    , s1v001desc_path = path.join(s1version001_path, filename)
+    , s1v002desc_path = path.join(s1version002_path, filename)
+    , s1v003desc_path = path.join(s1version003_path, filename)
+    , s1latest_path = path.join(service1_path, latest_dir)
     , service2 = 'service2'
     , s2version001 = '0.0.1'
     , s2v001desc = {
@@ -61,14 +65,14 @@ describe('Rext', function () {
       , 'protocol': 'http'
       , 'url': 'api.service2.com/1'
       }
-    , service2_path = path.join(repository_path, service2);
-    , s2version001_path = path.join(service2_path, s2version001);
-    , s2v001desc_path = path.join(s2version001_path, filename);
-    , s2latest_path = path.join(service2_path, latest_dir);
+    , s2v001desc_str = JSON.stringify(s2v001desc)
+    , service2_path = path.join(repository_path, service2)
+    , s2version001_path = path.join(service2_path, s2version001)
+    , s2v001desc_path = path.join(s2version001_path, filename)
+    , s2latest_path = path.join(service2_path, latest_dir)
     ;
 
   beforeEach(function (done) {
-
     fs.mkdirSync(repository_path);
     fs.mkdirSync(service1_path);
     fs.mkdirSync(s1version001_path);
@@ -93,38 +97,102 @@ describe('Rext', function () {
     var rext = new Rext(repository_path);
 
     it('creates a new version of document in the repository', function (done) {
+      rext.create({
+        name: s1v003desc_path
+      , version: s1version003
+      , data: new Buffer(s1v003desc_str)
+      }, function (err) {
+        if (err) done(err);
 
-     done();
+        var new_doc = fs.readFileSync(s1v003desc_path).toString('base64');
+        new_doc.should.equal(s1v003desc_str.toString('base64'));
+
+        done();
+      });
     });
 
     it('creates the first document version in the repository', function (done) {
+      rext.create({
+        name: s1v003desc_path
+      , data: new Buffer(s1v003desc_str)
+      }, function (err) {
+        if (err) done(err);
 
+        var new_doc = fs.readFileSync(s1v003desc_path).toString('base64');
+        new_doc.should.equal(s1v003desc_str.toString('base64'));
+
+        done();
+      });
      done();
     });
 
     it('returns an error if document version already exists', function (done) {
+      rext.create({
+        name: s1v001desc_path
+      , version: s1version001
+      , data: new Buffer(s1v001desc_str)
+      }, function (err) {
+        err.should.be.an.instanceof(Error);
 
-     done();
+        done();
+      });
     });
 
     it('returns an error if document name is not valid', function (done) {
+      rext.create({
+        name: '?*strangeservice*'
+      , version: s1version003
+      , data: new Buffer(s1v003desc_str)
+      }, function (err) {
+        err.should.be.an.instanceof(Error);
 
-     done();
+        done();
+      });
     });
 
     it('throws an error if document name is not passed', function (done) {
+      should.throws(
+        rext.create({
+          version: s1version003
+        , data: new Buffer(s1v003desc_str)
+        }
+        , function (err) {
+            if (err) done(err);
+          }
+        )
+      );
 
-     done();
+      done();
     });
 
     it('throws an error if document version is not passed', function (done) {
+      should.throws(
+        rext.create({
+          name: service1
+        , data: new Buffer(s1v003desc_str)
+        }
+        , function (err) {
+            if (err) done(err);
+          }
+        )
+      );
 
-     done();
+      done();
     });
 
     it('throws an error if document data is not passed', function (done) {
+      should.throws(
+        rext.create({
+          name: service1
+        , version: s1version003
+        }
+        , function (err) {
+            if (err) done(err);
+          }
+        )
+      );
 
-     done();
+      done();
     });
 
   });
