@@ -1,25 +1,28 @@
+
 var undefined
   , fs = require('fs')
   , path = require('path')
   , rimraf = require('rimraf')
   , async = require('async')
-  , Repository = require('../lib/rext.js')
+  , Rext = require('../lib/rext.js')
   ;
 
-describe('Resxt', function () {
+describe('Rext', function () {
 
   var repository_path = 'test/test-repository'
+    , filename = 'doc.rext'
+    , latest_dir = 'latest'
     , service1 = 'service1'
     , s1version001 = '0.0.1'
     , s1v001desc = {
         'service': 'service1'
-      , 'version': '0.0.1'
+      , 'version': s1version001
       , 'description': 'Service1 API version 1'
       , 'protocol': 'http'
       , 'url': 'api.service1.com/1'
       }
     , s1v001desc_updated = {
-        'service': 'service1'
+        'service': service1
       , 'version': '0.0.1'
       , 'description': 'Service1 API version 1 updated'
       , 'protocol': 'http'
@@ -27,38 +30,41 @@ describe('Resxt', function () {
       }
     , s1version002 = '0.0.2'
     , s1v002desc = {
-        'service': 'service1'
-      , 'version': '0.0.2'
+        'service': service1
+      , 'version': s1version002
       , 'description': 'Service1 API version 1'
       , 'protocol': 'https'
       , 'url': 'api.service1.com/1'
       }
+    , s1version003 = '0.0.3'
     , s1v003desc = {
-        'service': 'service1'
-      , 'version': '0.0.3'
+        'service': service1
+      , 'version': s1version003
       , 'description': 'Service1 API version 1'
       , 'protocol': 'https'
       , 'url': 'api.service1.com/1'
       }
-    , service1_path = repository_path + '/' + service1
-    , s1version001_path = service1_path + '/' + s1version001
-    , s1version002_path = service1_path + '/' + s1version002
-    , s1v001desc_path = s1version001_path + '/' + 'descriptor.json'
-    , s1v002desc_path = s1version002_path + '/' + 'descriptor.json'
-    , s1latest_path = service1_path + '/latest'
+    , service1_path = path.join(repository_path, service1);
+    , s1version001_path = path.join(service1_path, s1version001);
+    , s1version002_path = path.join(service1_path, s1version002);
+    , s1version003_path = path.join(service1_path, s1version003);
+    , s1v001desc_path = path.join(s1version001_path, filename);
+    , s1v002desc_path = path.join(s1version002_path, filename);
+    , s1v003desc_path = path.join(s1version003_path, filename);
+    , s1latest_path = path.join(service1_path, latest_dir);
     , service2 = 'service2'
     , s2version001 = '0.0.1'
     , s2v001desc = {
-        'service': 'service2'
-      , 'version': '0.0.1'
+        'service': service2
+      , 'version': s2version001
       , 'description': 'Service2 API version 1'
       , 'protocol': 'http'
       , 'url': 'api.service2.com/1'
       }
-    , service2_path = repository_path + '/' + service2
-    , s2version001_path = service2_path + '/' + s2version001
-    , s2v001desc_path = s2version001_path + '/' + 'descriptor.json'
-    , s2latest_path = service2_path + '/latest'
+    , service2_path = path.join(repository_path, service2);
+    , s2version001_path = path.join(service2_path, s2version001);
+    , s2v001desc_path = path.join(s2version001_path, filename);
+    , s2latest_path = path.join(service2_path, latest_dir);
     ;
 
   beforeEach(function (done) {
@@ -84,9 +90,11 @@ describe('Resxt', function () {
 
   describe('#create', function () {
 
+    var rext = new Rext(repository_path);
+
     it('create...', function (done) {
 
-      done();
+     done();
     });
 
   });
