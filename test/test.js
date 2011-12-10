@@ -328,7 +328,7 @@ describe('Rext', function () {
         if (err) done(err);
 
         var doc = data.toString('base64');
-        doc.should.equal(s1v002desc_str.toString('base64'));
+        doc.should.equal(s1latest_path.toString('base64'));
 
         done();
       });
@@ -374,36 +374,96 @@ describe('Rext', function () {
 
   describe('#update', function () {
 
-    it('updates a specific version of a document', function (done) {
+    var rext = new Rext(repository_path);
 
-      done();
+    it('updates a specific version of a document', function (done) {
+      rext.update({
+        name: s1v001desc_path
+      , version: s1version001
+      , data: new Buffer(s1v003desc_str)
+      }, function (err) {
+        if (err) done(err);
+
+        var updated = fs.readFileSync(s1v001desc_path).toString('base64');
+        updated.should.equal(s1v003desc_str.toString('base64'));
+
+        var unchanged = fs.readFileSync(s1v002desc_path).toString('base64');
+        unchanged.should.equal(s1v002desc_str.toString('base64'));
+
+        done();
+      });
     });
 
     it('updates the last version of a document if version is not passed', function (done) {
+      rext.update({
+        name: s1v001desc_path
+      , data: new Buffer(s1v003desc_str)
+      }, function (err) {
+        if (err) done(err);
 
-      done();
+        var updated = fs.readFileSync(s1latest_path).toString('base64');
+        updated.should.equal(s1v002desc_str.toString('base64'));
+
+        var unchanged = fs.readFileSync(s1v001desc_path).toString('base64');
+        unchanged.should.equal(s1v002desc_str.toString('base64'));
+
+        done();
+      });
     });
 
     it('returns an error if not-existing document name is passed', function (done) {
+      rext.update({
+        name: 'false-service'
+      , version: s1version001
+      , data: new Buffer(s1v003desc_str)
+      }, function (err) {
+        err.should.be.an.instanceof(Error);
 
-      done();
+        done();
+      });
     });
 
     it('returns an error if not-existing document version is passed', function (done) {
+      rext.update({
+        name: service1
+      , version: '1.0.6'
+      , data: new Buffer(s1v003desc_str)
+      }, function (err) {
+        err.should.be.an.instanceof(Error);
 
-      done();
+        done();
+      });
     });
 
     it('throws an error if document name is not passed', function (done) {
+      should.throws(
+        rext.update({
+          version: s1version002
+        , data: new Buffer(s1v003desc_str)
+        }
+        , function (err) {
+            if (err) done(err);
+          }
+        )
+      );
 
       done();
     });
 
     it('throws an error if document data is not passed', function (done) {
+      should.throws(
+        rext.update({
+          name: service1
+        , version: s1version002
+        }
+        , function (err) {
+            if (err) done(err);
+          }
+        )
+      );
 
       done();
     });
 
   });
-
 });
