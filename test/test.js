@@ -330,7 +330,7 @@ describe('Rext', function () {
         if (err) done(err);
 
         var doc = data.toString('utf-8');
-        doc.should.equal(s1latestdocPath.toString('utf-8'));
+        doc.should.equal(s1v002docStr.toString('utf-8'));
 
         done();
       });
