@@ -100,7 +100,7 @@ describe('Rext', function () {
     rimraf.sync(repositoryPath)
     done();
   });
-/*
+
   describe('.create', function () {
 
     var rext = new Rext(repositoryPath);
@@ -245,7 +245,7 @@ describe('Rext', function () {
       });
     });
 
-    it('lists all version strings of a document, but \'last\', if document name is passed', function (done) {
+    it('lists all version strings of a document, but \'latest\', if document name is passed', function (done) {
       rext.list(service1, function (err, data) {
         if (err) done(err);
 
@@ -387,7 +387,7 @@ describe('Rext', function () {
     });
 
   });
-*/
+
   describe('.update', function () {
 
     var rext = new Rext(repositoryPath);
