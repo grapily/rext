@@ -26,7 +26,7 @@ describe('Rext', function () {
 
   var repositoryPath = 'test/test-repository'
     , filename = Rext.FILENAME
-    , latestDir = 'latest'
+    , latestDir = Rext.LATESTDIR
     , service1 = 'service1'
     , s1version001 = '0.0.1'
     , s1v001doc = {
@@ -418,10 +418,10 @@ describe('Rext', function () {
         if (err) done(err);
 
         var updated = fs.readFileSync(s1latestdocPath).toString('utf-8');
-        updated.should.equal(s1v002docStr.toString('utf-8'));
+        updated.should.equal(s1v003docStr.toString('utf-8'));
 
         var unchanged = fs.readFileSync(s1v001docPath).toString('utf-8');
-        unchanged.should.equal(s1v002docStr.toString('utf-8'));
+        unchanged.should.equal(s1v001docStr.toString('utf-8'));
 
         done();
       });
