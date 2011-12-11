@@ -26,7 +26,7 @@ describe('Rext', function () {
 
   var repositoryPath = 'test/test-repository'
     , filename = Rext.FILENAME
-    , latestDir = Rext.LATEST
+    , latestDir = Rext.LATESTDIR
     , service1 = 'service1'
     , s1version001 = '0.0.1'
     , s1v001doc = {
@@ -100,7 +100,7 @@ describe('Rext', function () {
     rimraf.sync(repositoryPath)
     done();
   });
-
+/*
   describe('.create', function () {
 
     var rext = new Rext(repositoryPath);
@@ -387,7 +387,7 @@ describe('Rext', function () {
     });
 
   });
-
+*/
   describe('.update', function () {
 
     var rext = new Rext(repositoryPath);
