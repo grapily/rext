@@ -37,14 +37,6 @@ describe('Rext', function () {
       , 'url': 'api.service1.com/1'
       }
     , s1v001docStr = JSON.stringify(s1v001doc)
-    , s1v001docUpdated = {
-        'service': service1
-      , 'version': '0.0.1'
-      , 'description': 'Service1 API version 1 updated'
-      , 'protocol': 'http'
-      , 'url': 'api.service1.com/1'
-      }
-    , s1v002docStr = JSON.stringify(s1v002doc)
     , s1version002 = '0.0.2'
     , s1v002doc = {
         'service': service1
@@ -53,7 +45,7 @@ describe('Rext', function () {
       , 'protocol': 'https'
       , 'url': 'api.service1.com/1'
       }
-    , s1v003docStr = JSON.stringify(s1v003doc)
+    , s1v002docStr = JSON.stringify(s1v002doc)
     , s1version003 = '0.0.3'
     , s1v003doc = {
         'service': service1
