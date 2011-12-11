@@ -25,7 +25,7 @@ function throwTest (f) {
 describe('Rext', function () {
 
   var repositoryPath = 'test/test-repository'
-    , filename = 'doc.rext'
+    , filename = Rext.FILENAME
     , latestDir = 'latest'
     , service1 = 'service1'
     , s1version001 = '0.0.1'
@@ -107,7 +107,7 @@ describe('Rext', function () {
 
     it('creates a new version of document in the repository that became the lastes', function (done) {
       rext.create({
-        name: s1v003docPath
+        name: service1
       , version: s1version003
       , data: new Buffer(s1v003docStr)
       }, function (err) {
@@ -160,7 +160,7 @@ describe('Rext', function () {
 
     it('returns an error if document version already exists', function (done) {
       rext.create({
-        name: s1v001docPath
+        name: service1
       , version: s1version001
       , data: new Buffer(s1v001docStr)
       }, function (err) {
@@ -394,7 +394,7 @@ describe('Rext', function () {
 
     it('updates a specific version of a document', function (done) {
       rext.update({
-        name: s1v001docPath
+        name: service1
       , version: s1version001
       , data: new Buffer(s1v003docStr)
       }, function (err) {
@@ -412,7 +412,7 @@ describe('Rext', function () {
 
     it('updates the last version of a document if version is not passed', function (done) {
       rext.update({
-        name: s1v001docPath
+        name: service1
       , data: new Buffer(s1v003docStr)
       }, function (err) {
         if (err) done(err);
