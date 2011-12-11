@@ -103,7 +103,7 @@ describe('Rext', function () {
     rimraf.sync(repositoryPath)
     done();
   });
-/*
+
   describe('.create', function () {
 
     it('creates a new version of document in the repository that become the lastes', function (done) {
@@ -217,7 +217,7 @@ describe('Rext', function () {
     });
 
   });
-*/
+
   describe('.list', function () {
 
     it('lists all document names if nothing but callback is passed', function (done) {
