@@ -100,7 +100,7 @@ describe('Rext', function () {
     rimraf.sync(repositoryPath)
     done();
   });
-
+/*
   describe('.create', function () {
 
     var rext = new Rext(repositoryPath);
@@ -387,7 +387,7 @@ describe('Rext', function () {
     });
 
   });
-
+*/
   describe('.update', function () {
 
     var rext = new Rext(repositoryPath);
