@@ -103,7 +103,7 @@ describe('Rext', function () {
     rimraf.sync(repositoryPath)
     done();
   });
-
+/*
   describe('.create', function () {
 
     it('creates a new version of document in the repository that become the lastes', function (done) {
@@ -217,7 +217,7 @@ describe('Rext', function () {
     });
 
   });
-
+*/
   describe('.list', function () {
 
     it('lists all document names if nothing but callback is passed', function (done) {
@@ -256,28 +256,18 @@ describe('Rext', function () {
 
   describe('.destroy', function () {
 
-    it('destroys a specific document version', function (done) {
-      rext.destroy({
-        name: service1
-      , version: s1version002
-      }, function (err) {
-        if (err) done(err);
-
-        should.be.true(path.existsSync(s1v001docPath));
-        should.not.be.true(path.existsSync(s1v002docPath));
-
-        done();
-      })
-    });
-
-    it('destroys a document and all its versions', function (done) {
+    it('destroys a document', function (done) {
       rext.destroy({
         name: service1
       }, function (err) {
         if (err) done(err);
 
-        should.be.true(path.existsSync(service2Path));
-        should.not.be.true(path.existsSync(service1Path));
+        path.existsSync(s1v001docPath).should.not.be.true;
+        path.existsSync(s1v002docPath).should.not.be.true;
+        path.existsSync(s1latestdocPath).should.not.be.true;
+        path.existsSync(service1Path).should.not.be.true;
+
+        path.existsSync(s2v001docPath).should.be.true;
 
         done();
       })
@@ -286,7 +276,6 @@ describe('Rext', function () {
     it('returns an error if not-existing document name is passed', function (done) {
       rext.destroy({
         name: 'falseService'
-      , version: s1version002
       }, function (err) {
         err.should.be.an.instanceof(Error);
 
@@ -294,15 +283,12 @@ describe('Rext', function () {
       });
     });
 
-    it('returns an error if not-existing document version is passed', function (done) {
-      rext.destroy({
-        name: service1
-      , version: '1.0.3'
-      }, function (err) {
-        err.should.be.an.instanceof(Error);
+    it('throws an error if document name is not passed', function (done) {
+      var options = {};
 
-        done();
-      });
+      throwTest(rext.destroy, options, noopErr);
+
+      done();
     });
 
   });
