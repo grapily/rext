@@ -24,9 +24,9 @@ function throwTest (f) {
 
 describe('Rext', function () {
 
-  var repositoryPath = 'test/test-repository'
-    , filename = 'doc.rext'
-    , latestDir = 'latest'
+  var repositoryPath = './test/test-repository'
+    , filename = Rext.FILENAME
+    , latestDir = Rext.LATESTDIR
     , service1 = 'service1'
     , s1version001 = '0.0.1'
     , s1v001doc = {
@@ -79,6 +79,7 @@ describe('Rext', function () {
     , s2v001docPath = path.join(s2version001Path, filename)
     , s2latestPath = path.join(service2Path, latestDir)
     , s2latestdocPath = path.join(s2latestPath, filename)
+    , rext
     ;
 
   beforeEach(function (done) {
@@ -93,6 +94,8 @@ describe('Rext', function () {
     fs.mkdirSync(s2version001Path);
     fs.writeFileSync(s2v001docPath, JSON.stringify(s2v001doc));
     fs.symlinkSync(s2version001, s2latestPath);
+
+    rext = new Rext(repositoryPath);
     done();
   });
 
@@ -103,27 +106,25 @@ describe('Rext', function () {
 
   describe('.create', function () {
 
-    var rext = new Rext(repositoryPath);
-
-    it('creates a new version of document in the repository that became the lastes', function (done) {
+    it('creates a new version of document in the repository that become the lastes', function (done) {
       rext.create({
-        name: s1v003docPath
+        name: service1
       , version: s1version003
-      , data: new Buffer(s1v003docStr)
+      , data: s1v003docStr
       }, function (err) {
         if (err) done(err);
 
-        var created = fs.readFileSync(s1v003docPath).toString('base64');
-        created.should.equal(s1v003docStr.toString('base64'));
+        var created = fs.readFileSync(s1v003docPath).toString('utf-8');
+        created.should.equal(s1v003docStr);
 
-        var latest = fs.readFileSync(s1latestdocPath).toString('base64');
-        created.should.equal(s1v003docStr.toString('base64'));
+        var latest = fs.readFileSync(s1latestdocPath).toString('utf-8');
+        created.should.equal(s1v003docStr.toString('utf-8'));
 
-        var unchanged1 = fs.readFileSync(s1v002docPath).toString('base64');
-        unchanged1.should.equal(s1v002docStr.toString('base64'));
+        var unchanged1 = fs.readFileSync(s1v002docPath).toString('utf-8');
+        unchanged1.should.equal(s1v002docStr.toString('utf-8'));
 
-        var unchanged2 = fs.readFileSync(s1v001docPath).toString('base64');
-        unchanged2.should.equal(s1v001docStr.toString('base64'));
+        var unchanged2 = fs.readFileSync(s1v001docPath).toString('utf-8');
+        unchanged2.should.equal(s1v001docStr.toString('utf-8'));
 
         done();
       });
@@ -143,26 +144,26 @@ describe('Rext', function () {
       rext.create({
         name: service3
       ,  version: s3version001
-      , data: new Buffer(s3v001docStr)
+      , data: s3v001docStr
       }, function (err) {
         if (err) done(err);
 
-        var created = fs.readFileSync(s3v001docPath).toString('base64');
-        created.should.equal(s3v001docStr.toString('base64'));
+        var created = fs.readFileSync(s3v001docPath).toString('utf-8');
+        created.should.equal(s3v001docStr.toString('utf-8'));
 
-        var latest = fs.readFileSync(s3latestdocPath).toString('base64');
-        created.should.equal(s3v001docStr.toString('base64'));
+        var latest = fs.readFileSync(s3latestdocPath).toString('utf-8');
+        created.should.equal(s3v001docStr.toString('utf-8'));
 
         done();
       });
      done();
     });
 
-    it('returns an error if document version already exists', function (done) {
+    it('returns an error if document version is older the latest one', function (done) {
       rext.create({
-        name: s1v001docPath
-      , version: s1version001
-      , data: new Buffer(s1v001docStr)
+        name: service1
+      , version: '0.0.1'
+      , data: s1v003docStr
       }, function (err) {
         err.should.be.an.instanceof(Error);
 
@@ -174,7 +175,7 @@ describe('Rext', function () {
       rext.create({
         name: '?*strangeservice*'
       , version: s1version003
-      , data: new Buffer(s1v003docStr)
+      , data: s1v003docStr
       }, function (err) {
         err.should.be.an.instanceof(Error);
 
@@ -185,7 +186,7 @@ describe('Rext', function () {
     it('throws an error if document name is not passed', function (done) {
       var options = {
             version: s1version003
-          , data: new Buffer(s1v003docStr)
+          , data: s1v003docStr
           };
 
       throwTest(rext.create, options, noopErr);
@@ -196,7 +197,7 @@ describe('Rext', function () {
     it('throws an error if document version is not passed', function (done) {
       var options = {
             name: service1
-          , data: new Buffer(s1v003docStr)
+          , data: s1v003docStr
           };
 
       throwTest(rext.create, options, noopErr);
@@ -219,25 +220,11 @@ describe('Rext', function () {
 
   describe('.list', function () {
 
-    var rext = new Rext(repositoryPath);
-
-    it('lists all document names if undefined document name is passed', function (done) {
-      rext.list(undefined, function (err, data) {
-        if (err) done(err);
-
-        data.should.should.have.lengthOf(2);
-        data.should.contain(service1);
-        data.should.contain(service2);
-
-        done();
-      });
-    });
-
     it('lists all document names if nothing but callback is passed', function (done) {
       rext.list(function (err, data) {
         if (err) done(err);
 
-        data.should.should.have.lengthOf(2);
+        data.should.have.lengthOf(2);
         data.should.contain(service1);
         data.should.contain(service2);
 
@@ -245,11 +232,11 @@ describe('Rext', function () {
       });
     });
 
-    it('lists all version strings of a document, but \'last\', if document name is passed', function (done) {
+    it('lists all version strings of a document, but \'latest\', if document name is passed', function (done) {
       rext.list(service1, function (err, data) {
         if (err) done(err);
 
-        data.should.should.have.lengthOf(2);
+        data.should.have.lengthOf(2);
         data.should.contain(s1version001);
         data.should.contain(s1version002);
 
@@ -257,10 +244,9 @@ describe('Rext', function () {
       });
     });
 
-    it('returns an empty list if a not-existing document name is passed', function (done) {
+    it('returns an error if a not-existing document name is passed', function (done) {
       rext.list('falseService', function (err, data) {
-        data.should.be.an.instanceof(Array);
-        data.should.have.lengthOf(0);
+        err.should.be.an.instanceof(Error);
 
         done();
       });
@@ -270,30 +256,18 @@ describe('Rext', function () {
 
   describe('.destroy', function () {
 
-    var rext = new Rext(repositoryPath);
-
-    it('destroys a specific document version', function (done) {
-      rext.destroy({
-        name: service1
-      , version: s1version002
-      }, function (err) {
-        if (err) done(err);
-
-        should.be.true(path.existsSync(s1v001docPath));
-        should.not.be.true(path.existsSync(s1v002docPath));
-
-        done();
-      })
-    });
-
-    it('destroys a document and all its versions', function (done) {
+    it('destroys a document', function (done) {
       rext.destroy({
         name: service1
       }, function (err) {
         if (err) done(err);
 
-        should.be.true(path.existsSync(service2Path));
-        should.not.be.true(path.existsSync(service1Path));
+        path.existsSync(s1v001docPath).should.not.be.true;
+        path.existsSync(s1v002docPath).should.not.be.true;
+        path.existsSync(s1latestdocPath).should.not.be.true;
+        path.existsSync(service1Path).should.not.be.true;
+
+        path.existsSync(s2v001docPath).should.be.true;
 
         done();
       })
@@ -302,7 +276,6 @@ describe('Rext', function () {
     it('returns an error if not-existing document name is passed', function (done) {
       rext.destroy({
         name: 'falseService'
-      , version: s1version002
       }, function (err) {
         err.should.be.an.instanceof(Error);
 
@@ -310,22 +283,17 @@ describe('Rext', function () {
       });
     });
 
-    it('returns an error if not-existing document version is passed', function (done) {
-      rext.destroy({
-        name: service1
-      , version: '1.0.3'
-      }, function (err) {
-        err.should.be.an.instanceof(Error);
+    it('throws an error if document name is not passed', function (done) {
+      var options = {};
 
-        done();
-      });
+      throwTest(rext.destroy, options, noopErr);
+
+      done();
     });
 
   });
 
   describe('.retrieve', function () {
-
-    var rext = new Rext(repositoryPath);
 
     it('retrieves specific version of a document', function (done) {
       rext.retrieve({
@@ -334,8 +302,8 @@ describe('Rext', function () {
       }, function (err, data) {
         if (err) done(err);
 
-        var doc = data.toString('base64');
-        doc.should.equal(s1v001docStr.toString('base64'));
+        var doc = data.toString('utf-8');
+        doc.should.equal(s1v001docStr.toString('utf-8'));
 
         done();
       });
@@ -347,8 +315,8 @@ describe('Rext', function () {
       }, function (err, data) {
         if (err) done(err);
 
-        var doc = data.toString('base64');
-        doc.should.equal(s1latestdocPath.toString('base64'));
+        var doc = data.toString('utf-8');
+        doc.should.equal(s1v002docStr.toString('utf-8'));
 
         done();
       });
@@ -390,38 +358,53 @@ describe('Rext', function () {
 
   describe('.update', function () {
 
-    var rext = new Rext(repositoryPath);
-
-    it('updates a specific version of a document', function (done) {
+    it('updates latest version of a document with multiple versions', function (done) {
       rext.update({
-        name: s1v001docPath
-      , version: s1version001
-      , data: new Buffer(s1v003docStr)
+        name: service1
+      , data: s1v003docStr
       }, function (err) {
         if (err) done(err);
 
-        var updated = fs.readFileSync(s1v001docPath).toString('base64');
-        updated.should.equal(s1v003docStr.toString('base64'));
+        var latest = fs.readFileSync(s1latestdocPath).toString('utf-8');
+        latest.should.equal(s1v003docStr);
 
-        var unchanged = fs.readFileSync(s1v002docPath).toString('base64');
-        unchanged.should.equal(s1v002docStr.toString('base64'));
+        var updated = fs.readFileSync(s1v002docPath).toString('utf-8');
+        updated.should.equal(s1v003docStr);
+
+        var unchanged1 = fs.readFileSync(s1v001docPath).toString('utf-8');
+        unchanged1.should.equal(s1v001docStr);
+
+        var uncheanged2latest = fs.readFileSync(s2latestdocPath).toString('utf-8');
+        uncheanged2latest.should.equal(s2v001docStr);
+
+        var unchanged2 = fs.readFileSync(s2v001docPath).toString('utf-8');
+        unchanged2.should.equal(s2v001docStr);
 
         done();
       });
     });
 
-    it('updates the last version of a document if version is not passed', function (done) {
+    it('updates latest version of a document with single version', function (done) {
       rext.update({
-        name: s1v001docPath
-      , data: new Buffer(s1v003docStr)
+        name: service2
+      , data: s1v003docStr
       }, function (err) {
         if (err) done(err);
 
-        var updated = fs.readFileSync(s1latestdocPath).toString('base64');
-        updated.should.equal(s1v002docStr.toString('base64'));
+        var latest = fs.readFileSync(s2latestdocPath).toString('utf-8');
+        latest.should.equal(s1v003docStr);
 
-        var unchanged = fs.readFileSync(s1v001docPath).toString('base64');
-        unchanged.should.equal(s1v002docStr.toString('base64'));
+        var updated = fs.readFileSync(s2v001docPath).toString('utf-8');
+        updated.should.equal(s1v003docStr);
+
+        var unchanged1 = fs.readFileSync(s1v001docPath).toString('utf-8');
+        unchanged1.should.equal(s1v001docStr);
+
+        var uncheanged2latest = fs.readFileSync(s1latestdocPath).toString('utf-8');
+        uncheanged2latest.should.equal(s1v002docStr);
+
+        var unchanged2 = fs.readFileSync(s1v002docPath).toString('utf-8');
+        unchanged2.should.equal(s1v002docStr);
 
         done();
       });
@@ -431,19 +414,7 @@ describe('Rext', function () {
       rext.update({
         name: 'false-service'
       , version: s1version001
-      , data: new Buffer(s1v003docStr)
-      }, function (err) {
-        err.should.be.an.instanceof(Error);
-
-        done();
-      });
-    });
-
-    it('returns an error if not-existing document version is passed', function (done) {
-      rext.update({
-        name: service1
-      , version: '1.0.6'
-      , data: new Buffer(s1v003docStr)
+      , data: s1v003docStr
       }, function (err) {
         err.should.be.an.instanceof(Error);
 
@@ -454,7 +425,7 @@ describe('Rext', function () {
     it('throws an error if document name is not passed', function (done) {
       var options = {
             version: s1version002
-          , data: new Buffer(s1v003docStr)
+          , data: s1v003docStr
           };
 
       throwTest(rext.update, options, noopErr);
