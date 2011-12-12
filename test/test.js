@@ -358,36 +358,53 @@ describe('Rext', function () {
 
   describe('.update', function () {
 
-    it('updates a specific version of a document', function (done) {
+    it('updates latest version of a document with multiple versions', function (done) {
       rext.update({
         name: service1
-      , version: s1version001
       , data: s1v003docStr
       }, function (err) {
         if (err) done(err);
 
-        var updated = fs.readFileSync(s1v001docPath).toString('utf-8');
-        updated.should.equal(s1v003docStr.toString('utf-8'));
+        var latest = fs.readFileSync(s1latestdocPath).toString('utf-8');
+        latest.should.equal(s1v003docStr);
 
-        var unchanged = fs.readFileSync(s1v002docPath).toString('utf-8');
-        unchanged.should.equal(s1v002docStr.toString('utf-8'));
+        var updated = fs.readFileSync(s1v002docPath).toString('utf-8');
+        updated.should.equal(s1v003docStr);
+
+        var unchanged1 = fs.readFileSync(s1v001docPath).toString('utf-8');
+        unchanged1.should.equal(s1v001docStr);
+
+        var uncheanged2latest = fs.readFileSync(s2latestdocPath).toString('utf-8');
+        uncheanged2latest.should.equal(s2v001docStr);
+
+        var unchanged2 = fs.readFileSync(s2v001docPath).toString('utf-8');
+        unchanged2.should.equal(s2v001docStr);
 
         done();
       });
     });
 
-    it('updates the last version of a document if version is not passed', function (done) {
+    it('updates latest version of a document with single version', function (done) {
       rext.update({
-        name: service1
+        name: service2
       , data: s1v003docStr
       }, function (err) {
         if (err) done(err);
 
-        var updated = fs.readFileSync(s1latestdocPath).toString('utf-8');
-        updated.should.equal(s1v003docStr.toString('utf-8'));
+        var latest = fs.readFileSync(s2latestdocPath).toString('utf-8');
+        latest.should.equal(s1v003docStr);
 
-        var unchanged = fs.readFileSync(s1v001docPath).toString('utf-8');
-        unchanged.should.equal(s1v001docStr.toString('utf-8'));
+        var updated = fs.readFileSync(s2v001docPath).toString('utf-8');
+        updated.should.equal(s1v003docStr);
+
+        var unchanged1 = fs.readFileSync(s1v001docPath).toString('utf-8');
+        unchanged1.should.equal(s1v001docStr);
+
+        var uncheanged2latest = fs.readFileSync(s1latestdocPath).toString('utf-8');
+        uncheanged2latest.should.equal(s1v002docStr);
+
+        var unchanged2 = fs.readFileSync(s1v002docPath).toString('utf-8');
+        unchanged2.should.equal(s1v002docStr);
 
         done();
       });
@@ -397,18 +414,6 @@ describe('Rext', function () {
       rext.update({
         name: 'false-service'
       , version: s1version001
-      , data: s1v003docStr
-      }, function (err) {
-        err.should.be.an.instanceof(Error);
-
-        done();
-      });
-    });
-
-    it('returns an error if not-existing document version is passed', function (done) {
-      rext.update({
-        name: service1
-      , version: '1.0.6'
       , data: s1v003docStr
       }, function (err) {
         err.should.be.an.instanceof(Error);
