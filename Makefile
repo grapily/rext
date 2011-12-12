@@ -2,7 +2,8 @@
 SRC = lib/rext.js
 
 TESTS = test/*.js
-REPORTER = dot
+#REPORTER = dot
+REPORTER = spec
 
 all:
 	echo "Nothing to do... I'm a Node.js module!"

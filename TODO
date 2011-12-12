@@ -1,0 +1,7 @@
+TO DO
+_ add options parameter presence test
+_ add options parameter presence test
+_ add options parameter presence test
+_ testing version is a well-formed string /\d\d?\.\d\d?\.\d\d?/
+_ testing document name is fs compliant (e.g. not contain '*/...')
+_
