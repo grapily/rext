@@ -256,89 +256,18 @@ describe('Rext', function () {
 
   describe('.destroy', function () {
 
-    it('destroys a specific document version', function (done) {
+    it('destroys a document', function (done) {
       rext.destroy({
         name: service1
-      , version: s1version001
       }, function (err) {
         if (err) done(err);
 
-        path.existsSync(s1v002docPath).should.be.true;
-        path.existsSync(s1latestdocPath).should.be.true;
-        path.existsSync(s2v001docPath).should.be.true;
         path.existsSync(s1v001docPath).should.not.be.true;
-
-        done();
-      })
-    });
-
-    it('destroys the latest version of a document', function (done) {
-      rext.destroy({
-        name: service1
-      , version: s1version002
-      }, function (err) {
-        if (err) done(err);
-
-        path.existsSync(s1v001docPath).should.be.true;
-        path.existsSync(s2v001docPath).should.be.true;
-        path.existsSync(s1latestdocPath).should.be.true;
         path.existsSync(s1v002docPath).should.not.be.true;
-
-        var latestFile = fs.readFileSync(s1latestdocPath).toString('utf-8');
-        latestFile.should.equal(s1v001docStr.toString('utf-8'));
-
-
-
-
-
-        done();
-      })
-    });
-
-    it('destroys the latest version of a document explicitally', function (done) {
-      rext.destroy({
-        name: service1
-      , version: 'latest'
-      }, function (err) {
-        if (err) done(err);
-
-        path.existsSync(s1v002docPath).should.be.true;
-        path.existsSync(s2v001docPath).should.be.true;
-        path.existsSync(s1latestdocPath).should.be.true;
-
-        var latestFile = fs.readFileSync(s1latestdocPath).toString('utf-8');
-        latestFile.should.equal(s1v001docStr.toString('utf-8'));
-
-        path.existsSync(s1v001docPath).should.not.be.true;
-
-        done();
-      })
-    });
-
-    it('destroys a document and all its versions', function (done) {
-      rext.destroy({
-        name: service1
-      }, function (err) {
-        if (err) done(err);
-
-        path.existsSync(s2v001docPath).should.be.true;
+        path.existsSync(s1latestdocPath).should.not.be.true;
         path.existsSync(service1Path).should.not.be.true;
 
-        done();
-      })
-    });
-
-    it('destroys a whole document folder structure if destroy the only version present', function (done) {
-      rext.destroy({
-        name: service2,
-        version: s2version001
-      }, function (err) {
-        if (err) done(err);
-
-        path.existsSync(s1v001docPath).should.be.true;
-        path.existsSync(s1v002docPath).should.be.true;
-        path.existsSync(s1latestdocPath).should.be.true;
-        path.existsSync(service2Path).should.not.be.true;
+        path.existsSync(s2v001docPath).should.be.true;
 
         done();
       })
@@ -347,7 +276,6 @@ describe('Rext', function () {
     it('returns an error if not-existing document name is passed', function (done) {
       rext.destroy({
         name: 'falseService'
-      , version: s1version002
       }, function (err) {
         err.should.be.an.instanceof(Error);
 
@@ -355,15 +283,12 @@ describe('Rext', function () {
       });
     });
 
-    it('returns an error if not-existing document version is passed', function (done) {
-      rext.destroy({
-        name: service1
-      , version: '1.0.3'
-      }, function (err) {
-        err.should.be.an.instanceof(Error);
+    it('throws an error if document name is not passed', function (done) {
+      var options = {};
 
-        done();
-      });
+      throwTest(rext.destroy, options, noopErr);
+
+      done();
     });
 
   });
