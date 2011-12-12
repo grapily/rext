@@ -1,8 +1,8 @@
 {
     "name": "rext"
-  , "version": "0.0.3"
-  , "description": ""
-  , "keywords": []
+  , "version": "0.0.4"
+  , "description": "Simple text file repository with versioning support."
+  , "keywords": ["text", "repository", "file", "versioning", "filesystem"]
   , "author": "Grapily <dev.grapily.com>"
   , "dependencies": {
         "rimraf": ">=1.0.9"
