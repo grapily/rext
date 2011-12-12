@@ -5,13 +5,12 @@
   , "keywords": []
   , "author": "Grapily <dev.grapily.com>"
   , "dependencies": {
-
+        "rimraf": ">=1.0.9"
+      , "async": ">=0.1.15"
   }
   , "devDependencies": {
         "should": ">=0.3.2"
       , "mocha": ">=0.3.0"
-      , "rimraf": ">=1.0.9"
-      , "async": ">=0.1.15"
   }
   , "main": "./index.js"
   , "engines": { "node": "*" }
