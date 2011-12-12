@@ -176,6 +176,17 @@ describe('Rext', function () {
       });
     });
 
+    it('returns an error if document version not well formed', function (done) {
+      rext.create({
+        name: service1
+      , version: '0r.0.1'
+      , data: s1v003docStr
+      }, function (err) {
+        err.should.be.an.instanceof(Error);
+
+        done();
+      });
+    });
 
 /*
     it('returns an error if document name is not valid', function (done) {
@@ -347,6 +358,18 @@ describe('Rext', function () {
       rext.retrieve({
         name: service1
       , version: '1.0.6'
+      }, function (err) {
+        err.should.be.an.instanceof(Error);
+
+        done();
+      });
+    });
+
+    it('returns an error if document version not well formed', function (done) {
+      rext.create({
+        name: service1
+      , version: '0r.0'
+      , data: s1v003docStr
       }, function (err) {
         err.should.be.an.instanceof(Error);
 
