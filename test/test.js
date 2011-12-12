@@ -1,5 +1,6 @@
 
 var undefined
+  , slice = [].slice
   , fs = require('fs')
   , path = require('path')
   , rimraf = require('rimraf')
@@ -13,13 +14,11 @@ function noopErr (err) {
 }
 
 function throwTest (f) {
-  var params = Array.prototype.slice.call(arguments, 1);
+  var params = slice.call(arguments, 1);
 
-  should.throws(
-    function () {
-      f.apply(null, params);
-    }
-  );
+  should.throws(function () {
+    f.apply(null, params);
+  });
 }
 
 describe('Rext', function () {
@@ -170,19 +169,22 @@ describe('Rext', function () {
       });
     });
 
-    /*
+    
+/*
     it('returns an error if document name is not valid', function (done) {
-          rext.create({
-            name: '?*strangeservice*'
-          , version: s1version003
-          , data: s1v003docStr
-          }, function (err) {
-            err.should.be.an.instanceof(Error);
+      rext.create({
+        name: '?*strangeservice*'
+      , version: s1version003
+      , data: s1v003docStr
+      }, function (err) {
+        err.should.be.an.instanceof(Error);
+        
+        done();
+      });
+    });
+*/
 
-            done();
-          });
-        });
-    */
+    
     
     it('throws an error if document name is not passed', function (done) {
       var options = {
