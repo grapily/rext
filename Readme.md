@@ -1,7 +1,7 @@
 
 # rext
 
-Text document repository
+Simple text file repository with versioning support.
 
 ## API
 
