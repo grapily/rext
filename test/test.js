@@ -103,7 +103,7 @@ describe('Rext', function () {
     rimraf.sync(repositoryPath)
     done();
   });
-/*
+
   describe('.create', function () {
 
     it('creates a new version of document in the repository that become the lastes', function (done) {
@@ -159,11 +159,11 @@ describe('Rext', function () {
      done();
     });
 
-    it('returns an error if document version already exists', function (done) {
+    it('returns an error if document version is older the latest one', function (done) {
       rext.create({
         name: service1
-      , version: s1version001
-      , data: s1v001docStr
+      , version: '0.0.1'
+      , data: s1v003docStr
       }, function (err) {
         err.should.be.an.instanceof(Error);
 
@@ -217,7 +217,7 @@ describe('Rext', function () {
     });
 
   });
-*/
+
   describe('.list', function () {
 
     it('lists all document names if nothing but callback is passed', function (done) {
