@@ -4,7 +4,6 @@ var undefined
   , fs = require('fs')
   , path = require('path')
   , rimraf = require('rimraf')
-  , async = require('async')
   , should = require('should')
   , Rext = require('../lib/rext.js')
   ;
@@ -21,11 +20,19 @@ function throwTest (f) {
   });
 }
 
+function throwTestMessage (f, message) {
+  var params = slice.call(arguments, 2);
+
+  should.throws(function () {
+    f.apply(null, params);
+  }, message);
+}
+
 describe('Rext', function () {
 
   var repositoryPath = './test/test-repository'
     , filename = Rext.FILENAME
-    , latestDir = Rext.LATESTDIR
+    , latestDir = Rext.LATEST_DIR
     , service1 = 'service1'
     , s1version001 = '0.0.1'
     , s1v001doc = {
@@ -169,7 +176,7 @@ describe('Rext', function () {
       });
     });
 
-    
+
 /*
     it('returns an error if document name is not valid', function (done) {
       rext.create({
@@ -178,21 +185,21 @@ describe('Rext', function () {
       , data: s1v003docStr
       }, function (err) {
         err.should.be.an.instanceof(Error);
-        
+
         done();
       });
     });
 */
 
-    
-    
+
+
     it('throws an error if document name is not passed', function (done) {
       var options = {
             version: s1version003
           , data: s1v003docStr
           };
 
-      throwTest(rext.create, options, noopErr);
+      throwTestMessage(rext.create, Rext.BAD_ARGUMENTS_ERROR, options, noopErr);
 
       done();
     });
@@ -203,7 +210,7 @@ describe('Rext', function () {
           , data: s1v003docStr
           };
 
-      throwTest(rext.create, options, noopErr);
+      throwTestMessage(rext.create, Rext.BAD_ARGUMENTS_ERROR, options, noopErr);
 
       done();
     });
@@ -214,7 +221,7 @@ describe('Rext', function () {
           , version: s1version003
           };
 
-      throwTest(rext.create, options, noopErr);
+      throwTestMessage(rext.create, Rext.BAD_ARGUMENTS_ERROR, options, noopErr);
 
       done();
     });
@@ -289,7 +296,7 @@ describe('Rext', function () {
     it('throws an error if document name is not passed', function (done) {
       var options = {};
 
-      throwTest(rext.destroy, options, noopErr);
+      throwTestMessage(rext.destroy, Rext.BAD_ARGUMENTS_ERROR, options, noopErr);
 
       done();
     });
@@ -352,7 +359,7 @@ describe('Rext', function () {
             version: s1version002
           };
 
-      throwTest(rext.retrieve, options, noopErr);
+      throwTestMessage(rext.retrieve, Rext.BAD_ARGUMENTS_ERROR, options, noopErr);
 
       done();
     });
@@ -431,7 +438,7 @@ describe('Rext', function () {
           , data: s1v003docStr
           };
 
-      throwTest(rext.update, options, noopErr);
+      throwTestMessage(rext.update, Rext.BAD_ARGUMENTS_ERROR, options, noopErr);
 
       done();
     });
@@ -442,7 +449,7 @@ describe('Rext', function () {
           , version: s1version002
           };
 
-      throwTest(rext.update, options, noopErr);
+      throwTestMessage(rext.update, Rext.BAD_ARGUMENTS_ERROR, options, noopErr);
 
       done();
     });
