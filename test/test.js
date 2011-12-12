@@ -103,7 +103,7 @@ describe('Rext', function () {
     rimraf.sync(repositoryPath)
     done();
   });
-
+/*
   describe('.create', function () {
 
     it('creates a new version of document in the repository that become the lastes', function (done) {
@@ -217,7 +217,7 @@ describe('Rext', function () {
     });
 
   });
-
+*/
   describe('.list', function () {
 
     it('lists all document names if nothing but callback is passed', function (done) {
@@ -259,12 +259,57 @@ describe('Rext', function () {
     it('destroys a specific document version', function (done) {
       rext.destroy({
         name: service1
+      , version: s1version001
+      }, function (err) {
+        if (err) done(err);
+
+        path.existsSync(s1v002docPath).should.be.true;
+        path.existsSync(s1latestdocPath).should.be.true;
+        path.existsSync(s2v001docPath).should.be.true;
+        path.existsSync(s1v001docPath).should.not.be.true;
+
+        done();
+      })
+    });
+
+    it('destroys the latest version of a document', function (done) {
+      rext.destroy({
+        name: service1
       , version: s1version002
       }, function (err) {
         if (err) done(err);
 
-        should.be.true(path.existsSync(s1v001docPath));
-        should.not.be.true(path.existsSync(s1v002docPath));
+        path.existsSync(s1v001docPath).should.be.true;
+        path.existsSync(s2v001docPath).should.be.true;
+        path.existsSync(s1latestdocPath).should.be.true;
+        path.existsSync(s1v002docPath).should.not.be.true;
+
+        var latestFile = fs.readFileSync(s1latestdocPath).toString('utf-8');
+        latestFile.should.equal(s1v001docStr.toString('utf-8'));
+
+
+
+
+
+        done();
+      })
+    });
+
+    it('destroys the latest version of a document explicitally', function (done) {
+      rext.destroy({
+        name: service1
+      , version: 'latest'
+      }, function (err) {
+        if (err) done(err);
+
+        path.existsSync(s1v002docPath).should.be.true;
+        path.existsSync(s2v001docPath).should.be.true;
+        path.existsSync(s1latestdocPath).should.be.true;
+
+        var latestFile = fs.readFileSync(s1latestdocPath).toString('utf-8');
+        latestFile.should.equal(s1v001docStr.toString('utf-8'));
+
+        path.existsSync(s1v001docPath).should.not.be.true;
 
         done();
       })
@@ -276,8 +321,24 @@ describe('Rext', function () {
       }, function (err) {
         if (err) done(err);
 
-        should.be.true(path.existsSync(service2Path));
-        should.not.be.true(path.existsSync(service1Path));
+        path.existsSync(s2v001docPath).should.be.true;
+        path.existsSync(service1Path).should.not.be.true;
+
+        done();
+      })
+    });
+
+    it('destroys a whole document folder structure if destroy the only version present', function (done) {
+      rext.destroy({
+        name: service2,
+        version: s2version001
+      }, function (err) {
+        if (err) done(err);
+
+        path.existsSync(s1v001docPath).should.be.true;
+        path.existsSync(s1v002docPath).should.be.true;
+        path.existsSync(s1latestdocPath).should.be.true;
+        path.existsSync(service2Path).should.not.be.true;
 
         done();
       })
