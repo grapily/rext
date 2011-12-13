@@ -3,6 +3,20 @@
 
 Simple text file repository with versioning support.
 
+## Installation
+    npm install rext
+    npm install
+    mkdir repodir
+
+## Testing
+    npm install -d
+    make test
+
+## Usage
+    var Rext = require('rext')
+      , rext = new Rext('./repodir')
+      ;
+
 ## API
 
 - create

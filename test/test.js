@@ -25,7 +25,11 @@ function throwTestMessage (f, message) {
 
   should.throws(function () {
     f.apply(null, params);
-  }, message);
+  }, function (err) {
+    if ((err instanceof Error) && err.message === message) {
+      return true;
+    }
+  });
 }
 
 describe('Rext', function () {
@@ -176,6 +180,17 @@ describe('Rext', function () {
       });
     });
 
+    it('returns an error if document version not well formed', function (done) {
+      rext.create({
+        name: service1
+      , version: '0r.0.1'
+      , data: s1v003docStr
+      }, function (err) {
+        err.should.be.an.instanceof(Error);
+
+        done();
+      });
+    });
 
 /*
     it('returns an error if document name is not valid', function (done) {
@@ -199,7 +214,7 @@ describe('Rext', function () {
           , data: s1v003docStr
           };
 
-      throwTestMessage(rext.create, Rext.BAD_ARGUMENTS_ERROR, options, noopErr);
+      throwTestMessage(rext.create, Rext.errors.BAD_ARGUMENTS, options, noopErr);
 
       done();
     });
@@ -210,7 +225,7 @@ describe('Rext', function () {
           , data: s1v003docStr
           };
 
-      throwTestMessage(rext.create, Rext.BAD_ARGUMENTS_ERROR, options, noopErr);
+      throwTestMessage(rext.create, Rext.errors.BAD_ARGUMENTS, options, noopErr);
 
       done();
     });
@@ -221,7 +236,7 @@ describe('Rext', function () {
           , version: s1version003
           };
 
-      throwTestMessage(rext.create, Rext.BAD_ARGUMENTS_ERROR, options, noopErr);
+      throwTestMessage(rext.create, Rext.errors.BAD_ARGUMENTS, options, noopErr);
 
       done();
     });
@@ -257,7 +272,7 @@ describe('Rext', function () {
     it('returns an error if a not-existing document name is passed', function (done) {
       rext.list('falseService', function (err, data) {
         err.should.be.an.instanceof(Error);
-
+        
         done();
       });
     });
@@ -296,7 +311,7 @@ describe('Rext', function () {
     it('throws an error if document name is not passed', function (done) {
       var options = {};
 
-      throwTestMessage(rext.destroy, Rext.BAD_ARGUMENTS_ERROR, options, noopErr);
+      throwTestMessage(rext.destroy, Rext.errors.BAD_ARGUMENTS, options, noopErr);
 
       done();
     });
@@ -354,12 +369,24 @@ describe('Rext', function () {
       });
     });
 
+    it('returns an error if document version not well formed', function (done) {
+      rext.create({
+        name: service1
+      , version: '0r.0'
+      , data: s1v003docStr
+      }, function (err) {
+        err.should.be.an.instanceof(Error);
+
+        done();
+      });
+    });
+
     it('throws an error if document name is not passed', function (done) {
       var options = {
             version: s1version002
           };
 
-      throwTestMessage(rext.retrieve, Rext.BAD_ARGUMENTS_ERROR, options, noopErr);
+      throwTestMessage(rext.retrieve, Rext.errors.BAD_ARGUMENTS, options, noopErr);
 
       done();
     });
@@ -438,7 +465,7 @@ describe('Rext', function () {
           , data: s1v003docStr
           };
 
-      throwTestMessage(rext.update, Rext.BAD_ARGUMENTS_ERROR, options, noopErr);
+      throwTestMessage(rext.update, Rext.errors.BAD_ARGUMENTS, options, noopErr);
 
       done();
     });
@@ -449,7 +476,7 @@ describe('Rext', function () {
           , version: s1version002
           };
 
-      throwTestMessage(rext.update, Rext.BAD_ARGUMENTS_ERROR, options, noopErr);
+      throwTestMessage(rext.update, Rext.errors.BAD_ARGUMENTS, options, noopErr);
 
       done();
     });

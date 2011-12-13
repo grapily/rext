@@ -15,9 +15,6 @@ test:
 		--growl \
 		$(TESTS)
 
-test-server:
-	@node test/server
-
 docs: lib
 
 .PHONY: test docs clean
