@@ -1,6 +1,6 @@
 {
     "name": "rext"
-  , "version": "0.0.4"
+  , "version": "0.0.5"
   , "description": "Simple text file repository with versioning support."
   , "keywords": ["text", "repository", "file", "versioning", "filesystem"]
   , "author": "Grapily <dev.grapily.com>"
