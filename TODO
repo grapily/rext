@@ -4,4 +4,6 @@ _ add options parameter presence test
 _ add options parameter presence test
 _ testing version is a well-formed string /\d\d?\.\d\d?\.\d\d?/
 _ testing document name is fs compliant (e.g. not contain '*/...')
-_
+_ what about a stream version?
+_ throw an error if no callback is passed
+_ bugfix 'list': 'name' parameter is optional. What about using an options.name instead?
