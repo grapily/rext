@@ -32,6 +32,34 @@ function throwTestMessage (f, message) {
   });
 }
 
+function streamToString (stream, callback) {
+  var buffer = []
+    , bodyLen = 0
+    , doc = '';
+    ;
+    
+  stream.on('data', function (chunk) {
+    buffer.push(chunk);
+    bodyLen += chunk.length;
+  })
+  
+  stream.on('end', function () {
+    if (buffer.length && Buffer.isBuffer(buffer[0])) {
+      var body = new Buffer(bodyLen)
+        , i = 0
+        ;
+      buffer.forEach(function (chunk) {
+        chunk.copy(body, i, 0, chunk.length);
+        i += chunk.length;
+      })
+      doc = body.toString('utf8');
+    } else if (buffer.length) {
+      doc = buffer.join('');
+    }
+    callback(doc);
+  })
+}
+
 describe('Rext', function () {
 
   var repositoryPath = './test/test-repository'
@@ -324,26 +352,26 @@ describe('Rext', function () {
       rext.retrieve({
         name: service1
       , version: s1version001
-      }, function (err, data) {
+      }, function (err, stream) {
         if (err) done(err);
-
-        var doc = data.toString('utf-8');
-        doc.should.equal(s1v001docStr.toString('utf-8'));
-
-        done();
+        streamToString(stream, function (doc) {
+          doc.should.equal(s1v001docStr.toString('utf8'));
+          done();
+        })
       });
     });
 
     it('retrieves latest version of a document if version is not passed', function (done) {
       rext.retrieve({
         name: service1
-      }, function (err, data) {
+      }, function (err, stream) {
         if (err) done(err);
-
-        var doc = data.toString('utf-8');
-        doc.should.equal(s1v002docStr.toString('utf-8'));
-
-        done();
+        
+        streamToString(stream, function (doc) {
+          doc.should.equal(s1v002docStr.toString('utf8'));
+          done();
+        })
+        
       });
     });
 
