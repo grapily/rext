@@ -431,9 +431,12 @@ describe('Rext', function () {
   describe('.update', function () {
 
     it('updates latest version of a document with multiple versions', function (done) {
+      var readStream = fs.createReadStream(tests1v003Path);
+      readStream.pause();
+      
       rext.update({
         name: service1
-      , data: s1v003docStr
+      , data: readStream
       }, function (err) {
         if (err) done(err);
 
@@ -457,9 +460,12 @@ describe('Rext', function () {
     });
 
     it('updates latest version of a document with single version', function (done) {
+      var readStream = fs.createReadStream(tests1v003Path);
+      readStream.pause();
+      
       rext.update({
         name: service2
-      , data: s1v003docStr
+      , data: readStream
       }, function (err) {
         if (err) done(err);
 
@@ -483,10 +489,13 @@ describe('Rext', function () {
     });
 
     it('returns an error if not-existing document name is passed', function (done) {
+      var readStream = fs.createReadStream(tests1v003Path);
+      readStream.pause();
+      
       rext.update({
         name: 'false-service'
       , version: s1version001
-      , data: s1v003docStr
+      , data: readStream
       }, function (err) {
         err.should.be.an.instanceof(Error);
 
