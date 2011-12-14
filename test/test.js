@@ -117,6 +117,16 @@ describe('Rext', function () {
     , s2v001docPath = path.join(s2version001Path, filename)
     , s2latestPath = path.join(service2Path, latestDir)
     , s2latestdocPath = path.join(s2latestPath, filename)
+    , service3 = 'brandNewService'
+    , s3version001 = '0.0.1'
+    , service3Path = path.join(repositoryPath, service3)
+    , s3version001Path = path.join(service3Path, s3version001)
+    , s3v001docPath = path.join(s3version001Path, filename)
+    , s3latestPath = path.join(service3Path, latestDir)
+    , s3latestdocPath = path.join(s3latestPath, filename)
+    , s3v001docStr = 'this is a brand new service!'
+    , tests3v001Path = path.join('./test', 'tests3v001.txt')
+    , tests1v003Path = path.join('./test', 'tests1v003.txt')
     , rext
     ;
 
@@ -132,23 +142,28 @@ describe('Rext', function () {
     fs.mkdirSync(s2version001Path);
     fs.writeFileSync(s2v001docPath, JSON.stringify(s2v001doc));
     fs.symlinkSync(s2version001, s2latestPath);
-
+    fs.writeFileSync(tests1v003Path,s1v003docStr);
+    fs.writeFileSync(tests3v001Path,s3v001docStr);
     rext = new Rext(repositoryPath);
     done();
   });
 
   afterEach(function (done) {
-    rimraf.sync(repositoryPath)
+    rimraf.sync(repositoryPath);
+    fs.unlinkSync(tests1v003Path);
+    fs.unlinkSync(tests3v001Path);
+    
     done();
   });
 
   describe('.create', function () {
-
     it('creates a new version of document in the repository that become the latest', function (done) {
+      var readStream = fs.createReadStream(tests1v003Path);
+      readStream.pause();
       rext.create({
         name: service1
       , version: s1version003
-      , data: s1v003docStr
+      , data: readStream
       }, function (err) {
         if (err) done(err);
 
@@ -156,7 +171,7 @@ describe('Rext', function () {
         created.should.equal(s1v003docStr);
 
         var latest = fs.readFileSync(s1latestdocPath).toString('utf-8');
-        created.should.equal(s1v003docStr.toString('utf-8'));
+        latest.should.equal(s1v003docStr.toString('utf-8'));
 
         var unchanged1 = fs.readFileSync(s1v002docPath).toString('utf-8');
         unchanged1.should.equal(s1v002docStr.toString('utf-8'));
@@ -169,20 +184,12 @@ describe('Rext', function () {
     });
 
     it('creates the first document version in the repository', function (done) {
-      var service3 = 'brandNewService'
-        , s3version001 = '0.0.1'
-        , service3Path = path.join(repositoryPath, service3)
-        , s3version001Path = path.join(service3Path, s3version001)
-        , s3v001docPath = path.join(s3version001Path, filename)
-        , s3latestPath = path.join(service3Path, latestDir)
-        , s3latestdocPath = path.join(s3latestPath, filename)
-        , s3v001docStr = 'this is a brand new service!'
-        ;
-
+      var readStream = fs.createReadStream(tests3v001Path);
+      readStream.pause();
       rext.create({
         name: service3
       , version: s3version001
-      , data: s3v001docStr
+      , data: readStream
       }, function (err) {
         if (err) done(err);
 
