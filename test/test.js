@@ -1,8 +1,8 @@
 
 var undefined
   , slice = [].slice
+  , join = require('path').join
   , fs = require('fs')
-  , path = require('path')
   , rimraf = require('rimraf')
   , should = require('should')
   , Rext = require('../lib/rext.js')
@@ -93,15 +93,15 @@ describe('Rext', function () {
       , 'url': 'api.service1.com/1'
       }
     , s1v003docStr = JSON.stringify(s1v003doc)
-    , service1Path = path.join(repositoryPath, service1)
-    , s1version001Path = path.join(service1Path, s1version001)
-    , s1version002Path = path.join(service1Path, s1version002)
-    , s1version003Path = path.join(service1Path, s1version003)
-    , s1v001docPath = path.join(s1version001Path, filename)
-    , s1v002docPath = path.join(s1version002Path, filename)
-    , s1v003docPath = path.join(s1version003Path, filename)
-    , s1latestPath = path.join(service1Path, latestDir)
-    , s1latestdocPath = path.join(s1latestPath, filename)
+    , service1Path = join(repositoryPath, service1)
+    , s1version001Path = join(service1Path, s1version001)
+    , s1version002Path = join(service1Path, s1version002)
+    , s1version003Path = join(service1Path, s1version003)
+    , s1v001docPath = join(s1version001Path, filename)
+    , s1v002docPath = join(s1version002Path, filename)
+    , s1v003docPath = join(s1version003Path, filename)
+    , s1latestPath = join(service1Path, latestDir)
+    , s1latestdocPath = join(s1latestPath, filename)
     , service2 = 'service2'
     , s2version001 = '0.0.1'
     , s2v001doc = {
@@ -112,21 +112,21 @@ describe('Rext', function () {
       , 'url': 'api.service2.com/1'
       }
     , s2v001docStr = JSON.stringify(s2v001doc)
-    , service2Path = path.join(repositoryPath, service2)
-    , s2version001Path = path.join(service2Path, s2version001)
-    , s2v001docPath = path.join(s2version001Path, filename)
-    , s2latestPath = path.join(service2Path, latestDir)
-    , s2latestdocPath = path.join(s2latestPath, filename)
+    , service2Path = join(repositoryPath, service2)
+    , s2version001Path = join(service2Path, s2version001)
+    , s2v001docPath = join(s2version001Path, filename)
+    , s2latestPath = join(service2Path, latestDir)
+    , s2latestdocPath = join(s2latestPath, filename)
     , service3 = 'brandNewService'
     , s3version001 = '0.0.1'
-    , service3Path = path.join(repositoryPath, service3)
-    , s3version001Path = path.join(service3Path, s3version001)
-    , s3v001docPath = path.join(s3version001Path, filename)
-    , s3latestPath = path.join(service3Path, latestDir)
-    , s3latestdocPath = path.join(s3latestPath, filename)
+    , service3Path = join(repositoryPath, service3)
+    , s3version001Path = join(service3Path, s3version001)
+    , s3v001docPath = join(s3version001Path, filename)
+    , s3latestPath = join(service3Path, latestDir)
+    , s3latestdocPath = join(s3latestPath, filename)
     , s3v001docStr = 'this is a brand new service!'
-    , tests3v001Path = path.join('./test', 'tests3v001.txt')
-    , tests1v003Path = path.join('./test', 'tests1v003.txt')
+    , tests3v001Path = join('./test', 'tests3v001.txt')
+    , tests1v003Path = join('./test', 'tests1v003.txt')
     , rext
     ;
 
@@ -285,8 +285,8 @@ describe('Rext', function () {
         if (err) done(err);
 
         data.should.have.lengthOf(2);
-        data.should.contain(service1);
-        data.should.contain(service2);
+        data.should.include(service1);
+        data.should.include(service2);
 
         done();
       });
@@ -297,8 +297,8 @@ describe('Rext', function () {
         if (err) done(err);
 
         data.should.have.lengthOf(2);
-        data.should.contain(s1version001);
-        data.should.contain(s1version002);
+        data.should.include(s1version001);
+        data.should.include(s1version002);
 
         done();
       });
@@ -322,12 +322,12 @@ describe('Rext', function () {
       }, function (err) {
         if (err) done(err);
 
-        path.existsSync(s1v001docPath).should.not.be.true;
-        path.existsSync(s1v002docPath).should.not.be.true;
-        path.existsSync(s1latestdocPath).should.not.be.true;
-        path.existsSync(service1Path).should.not.be.true;
+        fs.existsSync(s1v001docPath).should.not.be.true;
+        fs.existsSync(s1v002docPath).should.not.be.true;
+        fs.existsSync(s1latestdocPath).should.not.be.true;
+        fs.existsSync(service1Path).should.not.be.true;
 
-        path.existsSync(s2v001docPath).should.be.true;
+        fs.existsSync(s2v001docPath).should.be.true;
 
         done();
       })
