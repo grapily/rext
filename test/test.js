@@ -1,8 +1,8 @@
 
 var undefined
   , slice = [].slice
+  , join = require('path').join
   , fs = require('fs')
-  , path = require('path')
   , rimraf = require('rimraf')
   , should = require('should')
   , Rext = require('../lib/rext.js')
@@ -30,6 +30,34 @@ function throwTestMessage (f, message) {
       return true;
     }
   });
+}
+
+function streamToString (stream, callback) {
+  var buffer = []
+    , bodyLen = 0
+    , doc = '';
+    ;
+    
+  stream.on('data', function (chunk) {
+    buffer.push(chunk);
+    bodyLen += chunk.length;
+  })
+  
+  stream.on('end', function () {
+    if (buffer.length && Buffer.isBuffer(buffer[0])) {
+      var body = new Buffer(bodyLen)
+        , i = 0
+        ;
+      buffer.forEach(function (chunk) {
+        chunk.copy(body, i, 0, chunk.length);
+        i += chunk.length;
+      })
+      doc = body.toString('utf8');
+    } else if (buffer.length) {
+      doc = buffer.join('');
+    }
+    callback(doc);
+  })
 }
 
 describe('Rext', function () {
@@ -65,15 +93,15 @@ describe('Rext', function () {
       , 'url': 'api.service1.com/1'
       }
     , s1v003docStr = JSON.stringify(s1v003doc)
-    , service1Path = path.join(repositoryPath, service1)
-    , s1version001Path = path.join(service1Path, s1version001)
-    , s1version002Path = path.join(service1Path, s1version002)
-    , s1version003Path = path.join(service1Path, s1version003)
-    , s1v001docPath = path.join(s1version001Path, filename)
-    , s1v002docPath = path.join(s1version002Path, filename)
-    , s1v003docPath = path.join(s1version003Path, filename)
-    , s1latestPath = path.join(service1Path, latestDir)
-    , s1latestdocPath = path.join(s1latestPath, filename)
+    , service1Path = join(repositoryPath, service1)
+    , s1version001Path = join(service1Path, s1version001)
+    , s1version002Path = join(service1Path, s1version002)
+    , s1version003Path = join(service1Path, s1version003)
+    , s1v001docPath = join(s1version001Path, filename)
+    , s1v002docPath = join(s1version002Path, filename)
+    , s1v003docPath = join(s1version003Path, filename)
+    , s1latestPath = join(service1Path, latestDir)
+    , s1latestdocPath = join(s1latestPath, filename)
     , service2 = 'service2'
     , s2version001 = '0.0.1'
     , s2v001doc = {
@@ -84,11 +112,21 @@ describe('Rext', function () {
       , 'url': 'api.service2.com/1'
       }
     , s2v001docStr = JSON.stringify(s2v001doc)
-    , service2Path = path.join(repositoryPath, service2)
-    , s2version001Path = path.join(service2Path, s2version001)
-    , s2v001docPath = path.join(s2version001Path, filename)
-    , s2latestPath = path.join(service2Path, latestDir)
-    , s2latestdocPath = path.join(s2latestPath, filename)
+    , service2Path = join(repositoryPath, service2)
+    , s2version001Path = join(service2Path, s2version001)
+    , s2v001docPath = join(s2version001Path, filename)
+    , s2latestPath = join(service2Path, latestDir)
+    , s2latestdocPath = join(s2latestPath, filename)
+    , service3 = 'brandNewService'
+    , s3version001 = '0.0.1'
+    , service3Path = join(repositoryPath, service3)
+    , s3version001Path = join(service3Path, s3version001)
+    , s3v001docPath = join(s3version001Path, filename)
+    , s3latestPath = join(service3Path, latestDir)
+    , s3latestdocPath = join(s3latestPath, filename)
+    , s3v001docStr = 'this is a brand new service!'
+    , tests3v001Path = join('./test', 'tests3v001.txt')
+    , tests1v003Path = join('./test', 'tests1v003.txt')
     , rext
     ;
 
@@ -104,23 +142,28 @@ describe('Rext', function () {
     fs.mkdirSync(s2version001Path);
     fs.writeFileSync(s2v001docPath, JSON.stringify(s2v001doc));
     fs.symlinkSync(s2version001, s2latestPath);
-
+    fs.writeFileSync(tests1v003Path,s1v003docStr);
+    fs.writeFileSync(tests3v001Path,s3v001docStr);
     rext = new Rext(repositoryPath);
     done();
   });
 
   afterEach(function (done) {
-    rimraf.sync(repositoryPath)
+    rimraf.sync(repositoryPath);
+    fs.unlinkSync(tests1v003Path);
+    fs.unlinkSync(tests3v001Path);
+    
     done();
   });
 
   describe('.create', function () {
-
     it('creates a new version of document in the repository that become the latest', function (done) {
+      var readStream = fs.createReadStream(tests1v003Path);
+      readStream.pause();
       rext.create({
         name: service1
       , version: s1version003
-      , data: s1v003docStr
+      , data: readStream
       }, function (err) {
         if (err) done(err);
 
@@ -128,7 +171,7 @@ describe('Rext', function () {
         created.should.equal(s1v003docStr);
 
         var latest = fs.readFileSync(s1latestdocPath).toString('utf-8');
-        created.should.equal(s1v003docStr.toString('utf-8'));
+        latest.should.equal(s1v003docStr.toString('utf-8'));
 
         var unchanged1 = fs.readFileSync(s1v002docPath).toString('utf-8');
         unchanged1.should.equal(s1v002docStr.toString('utf-8'));
@@ -141,20 +184,12 @@ describe('Rext', function () {
     });
 
     it('creates the first document version in the repository', function (done) {
-      var service3 = 'brandNewService'
-        , s3version001 = '0.0.1'
-        , service3Path = path.join(repositoryPath, service3)
-        , s3version001Path = path.join(service3Path, s3version001)
-        , s3v001docPath = path.join(s3version001Path, filename)
-        , s3latestPath = path.join(service3Path, latestDir)
-        , s3latestdocPath = path.join(s3latestPath, filename)
-        , s3v001docStr = 'this is a brand new service!'
-        ;
-
+      var readStream = fs.createReadStream(tests3v001Path);
+      readStream.pause();
       rext.create({
         name: service3
       , version: s3version001
-      , data: s3v001docStr
+      , data: readStream
       }, function (err) {
         if (err) done(err);
 
@@ -250,8 +285,8 @@ describe('Rext', function () {
         if (err) done(err);
 
         data.should.have.lengthOf(2);
-        data.should.contain(service1);
-        data.should.contain(service2);
+        data.should.include(service1);
+        data.should.include(service2);
 
         done();
       });
@@ -262,8 +297,8 @@ describe('Rext', function () {
         if (err) done(err);
 
         data.should.have.lengthOf(2);
-        data.should.contain(s1version001);
-        data.should.contain(s1version002);
+        data.should.include(s1version001);
+        data.should.include(s1version002);
 
         done();
       });
@@ -287,12 +322,12 @@ describe('Rext', function () {
       }, function (err) {
         if (err) done(err);
 
-        path.existsSync(s1v001docPath).should.not.be.true;
-        path.existsSync(s1v002docPath).should.not.be.true;
-        path.existsSync(s1latestdocPath).should.not.be.true;
-        path.existsSync(service1Path).should.not.be.true;
+        fs.existsSync(s1v001docPath).should.not.be.true;
+        fs.existsSync(s1v002docPath).should.not.be.true;
+        fs.existsSync(s1latestdocPath).should.not.be.true;
+        fs.existsSync(service1Path).should.not.be.true;
 
-        path.existsSync(s2v001docPath).should.be.true;
+        fs.existsSync(s2v001docPath).should.be.true;
 
         done();
       })
@@ -324,26 +359,26 @@ describe('Rext', function () {
       rext.retrieve({
         name: service1
       , version: s1version001
-      }, function (err, data) {
+      }, function (err, stream) {
         if (err) done(err);
-
-        var doc = data.toString('utf-8');
-        doc.should.equal(s1v001docStr.toString('utf-8'));
-
-        done();
+        streamToString(stream, function (doc) {
+          doc.should.equal(s1v001docStr.toString('utf8'));
+          done();
+        })
       });
     });
 
     it('retrieves latest version of a document if version is not passed', function (done) {
       rext.retrieve({
         name: service1
-      }, function (err, data) {
+      }, function (err, stream) {
         if (err) done(err);
-
-        var doc = data.toString('utf-8');
-        doc.should.equal(s1v002docStr.toString('utf-8'));
-
-        done();
+        
+        streamToString(stream, function (doc) {
+          doc.should.equal(s1v002docStr.toString('utf8'));
+          done();
+        })
+        
       });
     });
 
@@ -396,9 +431,12 @@ describe('Rext', function () {
   describe('.update', function () {
 
     it('updates latest version of a document with multiple versions', function (done) {
+      var readStream = fs.createReadStream(tests1v003Path);
+      readStream.pause();
+      
       rext.update({
         name: service1
-      , data: s1v003docStr
+      , data: readStream
       }, function (err) {
         if (err) done(err);
 
@@ -422,9 +460,12 @@ describe('Rext', function () {
     });
 
     it('updates latest version of a document with single version', function (done) {
+      var readStream = fs.createReadStream(tests1v003Path);
+      readStream.pause();
+      
       rext.update({
         name: service2
-      , data: s1v003docStr
+      , data: readStream
       }, function (err) {
         if (err) done(err);
 
@@ -448,10 +489,13 @@ describe('Rext', function () {
     });
 
     it('returns an error if not-existing document name is passed', function (done) {
+      var readStream = fs.createReadStream(tests1v003Path);
+      readStream.pause();
+      
       rext.update({
         name: 'false-service'
       , version: s1version001
-      , data: s1v003docStr
+      , data: readStream
       }, function (err) {
         err.should.be.an.instanceof(Error);
 
